@@ -46,6 +46,7 @@ class Connection(dict):
                  port: Optional[float] = None,
                  private_key: Optional[str] = None,
                  private_key_password: Optional[str] = None,
+                 timeout: Optional[str] = None,
                  user: Optional[str] = None):
         """
         Instructions for how to connect to a remote endpoint.
@@ -55,6 +56,7 @@ class Connection(dict):
         :param float port: The port to connect to.
         :param str private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         :param str private_key_password: The password to use in case the private key is encrypted.
+        :param str timeout: Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
         :param str user: The user that we should use for the connection.
         """
         pulumi.set(__self__, "host", host)
@@ -70,6 +72,8 @@ class Connection(dict):
             pulumi.set(__self__, "private_key", private_key)
         if private_key_password is not None:
             pulumi.set(__self__, "private_key_password", private_key_password)
+        if timeout is not None:
+            pulumi.set(__self__, "timeout", timeout)
         if user is None:
             user = 'root'
         if user is not None:
@@ -122,6 +126,14 @@ class Connection(dict):
         The password to use in case the private key is encrypted.
         """
         return pulumi.get(self, "private_key_password")
+
+    @property
+    @pulumi.getter
+    def timeout(self) -> Optional[str]:
+        """
+        Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+        """
+        return pulumi.get(self, "timeout")
 
     @property
     @pulumi.getter

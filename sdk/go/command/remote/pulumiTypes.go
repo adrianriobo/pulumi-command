@@ -24,6 +24,8 @@ type Connection struct {
 	PrivateKey *string `pulumi:"privateKey"`
 	// The password to use in case the private key is encrypted.
 	PrivateKeyPassword *string `pulumi:"privateKeyPassword"`
+	// Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+	Timeout *string `pulumi:"timeout"`
 	// The user that we should use for the connection.
 	User *string `pulumi:"user"`
 }
@@ -70,6 +72,8 @@ type ConnectionArgs struct {
 	PrivateKey pulumi.StringPtrInput `pulumi:"privateKey"`
 	// The password to use in case the private key is encrypted.
 	PrivateKeyPassword pulumi.StringPtrInput `pulumi:"privateKeyPassword"`
+	// Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+	Timeout pulumi.StringPtrInput `pulumi:"timeout"`
 	// The user that we should use for the connection.
 	User pulumi.StringPtrInput `pulumi:"user"`
 }
@@ -143,6 +147,11 @@ func (o ConnectionOutput) PrivateKey() pulumi.StringPtrOutput {
 // The password to use in case the private key is encrypted.
 func (o ConnectionOutput) PrivateKeyPassword() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.PrivateKeyPassword }).(pulumi.StringPtrOutput)
+}
+
+// Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+func (o ConnectionOutput) Timeout() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v Connection) *string { return v.Timeout }).(pulumi.StringPtrOutput)
 }
 
 // The user that we should use for the connection.

@@ -39,6 +39,7 @@ type Connection struct {
 	PrivateKey         *string  `pulumi:"privateKey,optional"`
 	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
 	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
+	Timeout            *string  `pulumi:"timeout,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -52,12 +53,15 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.PrivateKey, "The contents of an SSH key to use for the connection. This takes preference over the password if provided.")
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
+	a.Describe(&c.Timeout, "Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)")
+	// a.SetDefault(&c.Timeout, time.Duration(0))
 }
 
 func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
 		User:            *con.User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		// Timeout:         *con.Timeout,
 	}
 	if con.PrivateKey != nil {
 		var signer ssh.Signer
@@ -103,20 +107,41 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
 	var client *ssh.Client
 	var err error
-	_, _, err = retry.Until(ctx, retry.Acceptor{
-		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
-			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
-				config)
-			if err != nil {
-				if try > 10 {
-					return true, nil, err
+	if con.Timeout != nil {
+		timeout, err := time.ParseDuration(*con.Timeout)
+		if err != nil {
+			return nil, err
+		}
+		_, _, err = retry.UntilTimeout(ctx, retry.Acceptor{
+			Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
+				client, err = ssh.Dial("tcp",
+					net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
+					config)
+				if err != nil {
+					if try > 10 {
+						return true, nil, err
+					}
+					return false, nil, nil
 				}
-				return false, nil, nil
-			}
-			return true, nil, nil
-		},
-	})
+				return true, nil, nil
+			},
+		}, timeout)
+	} else {
+		_, _, err = retry.Until(ctx, retry.Acceptor{
+			Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
+				client, err = ssh.Dial("tcp",
+					net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
+					config)
+				if err != nil {
+					if try > 10 {
+						return true, nil, err
+					}
+					return false, nil, nil
+				}
+				return true, nil, nil
+			},
+		})
+	}
 	if err != nil {
 		return nil, err
 	}

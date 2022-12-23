@@ -22,6 +22,7 @@ class ConnectionArgs:
                  port: Optional[pulumi.Input[float]] = None,
                  private_key: Optional[pulumi.Input[str]] = None,
                  private_key_password: Optional[pulumi.Input[str]] = None,
+                 timeout: Optional[pulumi.Input[str]] = None,
                  user: Optional[pulumi.Input[str]] = None):
         """
         Instructions for how to connect to a remote endpoint.
@@ -31,6 +32,7 @@ class ConnectionArgs:
         :param pulumi.Input[float] port: The port to connect to.
         :param pulumi.Input[str] private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         :param pulumi.Input[str] private_key_password: The password to use in case the private key is encrypted.
+        :param pulumi.Input[str] timeout: Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
         :param pulumi.Input[str] user: The user that we should use for the connection.
         """
         pulumi.set(__self__, "host", host)
@@ -46,6 +48,8 @@ class ConnectionArgs:
             pulumi.set(__self__, "private_key", private_key)
         if private_key_password is not None:
             pulumi.set(__self__, "private_key_password", private_key_password)
+        if timeout is not None:
+            pulumi.set(__self__, "timeout", timeout)
         if user is None:
             user = 'root'
         if user is not None:
@@ -122,6 +126,18 @@ class ConnectionArgs:
     @private_key_password.setter
     def private_key_password(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "private_key_password", value)
+
+    @property
+    @pulumi.getter
+    def timeout(self) -> Optional[pulumi.Input[str]]:
+        """
+        Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+        """
+        return pulumi.get(self, "timeout")
+
+    @timeout.setter
+    def timeout(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "timeout", value)
 
     @property
     @pulumi.getter

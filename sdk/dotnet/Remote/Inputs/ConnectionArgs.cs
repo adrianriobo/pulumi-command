@@ -52,6 +52,12 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<string>? PrivateKeyPassword { get; set; }
 
         /// <summary>
+        /// Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+        /// </summary>
+        [Input("timeout")]
+        public Input<string>? Timeout { get; set; }
+
+        /// <summary>
         /// The user that we should use for the connection.
         /// </summary>
         [Input("user")]

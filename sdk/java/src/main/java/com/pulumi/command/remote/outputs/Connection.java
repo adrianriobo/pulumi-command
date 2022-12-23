@@ -43,6 +43,11 @@ public final class Connection {
      */
     private @Nullable String privateKeyPassword;
     /**
+     * @return Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+     * 
+     */
+    private @Nullable String timeout;
+    /**
      * @return The user that we should use for the connection.
      * 
      */
@@ -92,6 +97,13 @@ public final class Connection {
         return Optional.ofNullable(this.privateKeyPassword);
     }
     /**
+     * @return Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+     * 
+     */
+    public Optional<String> timeout() {
+        return Optional.ofNullable(this.timeout);
+    }
+    /**
      * @return The user that we should use for the connection.
      * 
      */
@@ -114,6 +126,7 @@ public final class Connection {
         private @Nullable Double port;
         private @Nullable String privateKey;
         private @Nullable String privateKeyPassword;
+        private @Nullable String timeout;
         private @Nullable String user;
         public Builder() {}
         public Builder(Connection defaults) {
@@ -124,6 +137,7 @@ public final class Connection {
     	      this.port = defaults.port;
     	      this.privateKey = defaults.privateKey;
     	      this.privateKeyPassword = defaults.privateKeyPassword;
+    	      this.timeout = defaults.timeout;
     	      this.user = defaults.user;
         }
 
@@ -158,6 +172,11 @@ public final class Connection {
             return this;
         }
         @CustomType.Setter
+        public Builder timeout(@Nullable String timeout) {
+            this.timeout = timeout;
+            return this;
+        }
+        @CustomType.Setter
         public Builder user(@Nullable String user) {
             this.user = user;
             return this;
@@ -170,6 +189,7 @@ public final class Connection {
             o.port = port;
             o.privateKey = privateKey;
             o.privateKeyPassword = privateKeyPassword;
+            o.timeout = timeout;
             o.user = user;
             return o;
         }

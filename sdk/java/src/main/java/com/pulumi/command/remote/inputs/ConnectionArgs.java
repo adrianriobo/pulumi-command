@@ -112,6 +112,21 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+     * 
+     */
+    @Import(name="timeout")
+    private @Nullable Output<String> timeout;
+
+    /**
+     * @return Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+     * 
+     */
+    public Optional<Output<String>> timeout() {
+        return Optional.ofNullable(this.timeout);
+    }
+
+    /**
      * The user that we should use for the connection.
      * 
      */
@@ -135,6 +150,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         this.port = $.port;
         this.privateKey = $.privateKey;
         this.privateKeyPassword = $.privateKeyPassword;
+        this.timeout = $.timeout;
         this.user = $.user;
     }
 
@@ -280,6 +296,27 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder privateKeyPassword(String privateKeyPassword) {
             return privateKeyPassword(Output.of(privateKeyPassword));
+        }
+
+        /**
+         * @param timeout Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+         * 
+         * @return builder
+         * 
+         */
+        public Builder timeout(@Nullable Output<String> timeout) {
+            $.timeout = timeout;
+            return this;
+        }
+
+        /**
+         * @param timeout Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+         * 
+         * @return builder
+         * 
+         */
+        public Builder timeout(String timeout) {
+            return timeout(Output.of(timeout));
         }
 
         /**

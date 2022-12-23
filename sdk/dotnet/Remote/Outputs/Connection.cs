@@ -41,6 +41,10 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly string? PrivateKeyPassword;
         /// <summary>
+        /// Time duration for retry the remote command, timeout is specified using a time duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.)
+        /// </summary>
+        public readonly string? Timeout;
+        /// <summary>
         /// The user that we should use for the connection.
         /// </summary>
         public readonly string? User;
@@ -59,6 +63,8 @@ namespace Pulumi.Command.Remote.Outputs
 
             string? privateKeyPassword,
 
+            string? timeout,
+
             string? user)
         {
             AgentSocketPath = agentSocketPath;
@@ -67,6 +73,7 @@ namespace Pulumi.Command.Remote.Outputs
             Port = port;
             PrivateKey = privateKey;
             PrivateKeyPassword = privateKeyPassword;
+            Timeout = timeout;
             User = user;
         }
     }
