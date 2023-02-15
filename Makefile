@@ -18,6 +18,9 @@ GOPATH			:= $(shell go env GOPATH)
 WORKING_DIR     := $(shell pwd)
 TESTPARALLELISM := 4
 
+CONTAINER_RUNTIME ?= podman
+PULUMI_PROVIDER_TOOLSET_OCI ?= quay.io/ariobolo/pulumi-provider-toolset:v0.1
+
 ensure::
 	cd provider && go mod tidy
 	cd sdk && go mod tidy
@@ -126,3 +129,11 @@ install_nodejs_sdk::
 
 test::
 	cd examples && go test -v -tags=all -timeout 2h
+
+toolset-build::
+	${CONTAINER_RUNTIME} run -it --rm \
+		-w /data -v ${PWD}:/data:Z \
+		--entrypoint=make ${PULUMI_PROVIDER_TOOLSET_OCI} ensure
+	${CONTAINER_RUNTIME} run -it --rm \
+		-w /data -v ${PWD}:/data:Z \
+		--entrypoint=make ${PULUMI_PROVIDER_TOOLSET_OCI} build
